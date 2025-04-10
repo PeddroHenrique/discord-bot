@@ -4,14 +4,14 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
-public abstract class TokenRetriver {
+public abstract class PropertiesRetriver {
 
     private static final String propertiesFile = "application.properties";
-    private static Properties properties;
+    private static final Properties properties;
 
     static {
         properties = new Properties();
-        try (InputStream inputStream = TokenRetriver.class.getClassLoader().getResourceAsStream(propertiesFile)) {
+        try (InputStream inputStream = PropertiesRetriver.class.getClassLoader().getResourceAsStream(propertiesFile)) {
             if (inputStream != null) {
                 properties.load(inputStream);
             } else {
