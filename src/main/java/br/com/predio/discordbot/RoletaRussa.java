@@ -9,10 +9,10 @@ import javax.security.auth.login.LoginException;
 public class RoletaRussa {
 
     public static void main(String[] args) throws LoginException, InterruptedException {
-        String token = TokenRetriver.getProperties("token");
+        String token = PropertiesRetriver.getProperties("token");
         JDA jda = JDABuilder.createDefault(token)
-                .enableIntents(GatewayIntent.MESSAGE_CONTENT)
-                .addEventListeners(new PingPongListener())
+                .enableIntents(GatewayIntent.MESSAGE_CONTENT, GatewayIntent.GUILD_MEMBERS)
+                .addEventListeners(new MyListeners())
                 .build();
 
         jda.awaitReady();
