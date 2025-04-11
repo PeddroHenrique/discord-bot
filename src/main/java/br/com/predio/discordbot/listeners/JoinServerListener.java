@@ -2,39 +2,42 @@ package br.com.predio.discordbot.listeners;
 
 import br.com.predio.discordbot.PropertiesRetriver;
 import net.dv8tion.jda.api.entities.Message;
-import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
-import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberJoinEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
-public class MyListeners extends ListenerAdapter {
+import java.util.ArrayList;
+import java.util.List;
 
-    private static String canalId;
+public class JoinServerListener extends ListenerAdapter {
 
-    static {
-        canalId = PropertiesRetriver.getProperties("discord.canal-id");
-    }
+    private final List<String> nomesUsuarios = new ArrayList<>();
+    private final String idChat = PropertiesRetriver.getProperties("discord.chat-principal-id");
 
     @Override
     public void onGuildMemberJoin(GuildMemberJoinEvent event) {
-        TextChannel mensagem = event.getGuild().getTextChannelById(canalId);
-        if (mensagem != null) {
-            mensagem.sendMessage(event.getUser().getAsMention() + " kita dessa porra").queue();
-        }
+        String nomeUsuario = event.getUser().getName();
+        nomesUsuarios.add(nomeUsuario);
     }
 
     @Override
     public void onMessageReceived(MessageReceivedEvent event) {
-        if (event.getAuthor().isBot()) return;
-        // We don't want to respond to other bot accounts, including ourself
-        Message message = event.getMessage();
-        String content = message.getContentRaw();
-        // getContentRaw() is an atomic getter
-        // getContentDisplay() is a lazy getter which modifies the content for e.g. console view (strip discord formatting)
-        if (content.equals("testando")) {
-            MessageChannel channel = event.getChannel();
-            channel.sendMessage("testando").queue(); // Important to call .queue() on the RestAction returned by sendMessage(...)
+        System.out.println("ENTROU NO METODO");
+        Message mensagem = event.getMessage();
+        String conteudo = mensagem.getContentRaw();
+
+        boolean contemNomeUsuario = nomesUsuarios.stream().anyMatch(conteudo::contains);
+//        System.out.println("SISTEMA " + mensagem.getAuthor().isSystem());
+//        System.out.println("WEBHOOK " + mensagem.isWebhookMessage());
+//        System.out.println("CONTEM USUSARIO " + contemNomeUsuario);
+//        System.out.println("CONTEUDO " + mensagem.getContentRaw());
+//        System.out.println("NOME DO AUTOR " + mensagem.getAuthor().getName());
+
+        if (contemNomeUsuario) {
+            System.out.println("ENTROU NA CONDIÇÃO");
+            event.getChannel().sendMessage(event.getAuthor().getAsMention() + " kita dessa porra").queue();
+
+            nomesUsuarios.removeIf(conteudo::contains);
         }
     }
 }
