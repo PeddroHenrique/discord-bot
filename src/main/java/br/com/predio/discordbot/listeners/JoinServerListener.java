@@ -1,7 +1,6 @@
 package br.com.predio.discordbot.listeners;
 
-import br.com.predio.discordbot.PropertiesRetriver;
-import net.dv8tion.jda.api.entities.Message;
+import br.com.predio.discordbot.utils.PropertiesRetriver;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberJoinEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
@@ -22,22 +21,17 @@ public class JoinServerListener extends ListenerAdapter {
 
     @Override
     public void onMessageReceived(MessageReceivedEvent event) {
-        System.out.println("ENTROU NO METODO");
-        Message mensagem = event.getMessage();
-        String conteudo = mensagem.getContentRaw();
+        if (event.getChannel().getId().equals(PropertiesRetriver.getProperties("discord.chat-principal-id"))) {
 
-        boolean contemNomeUsuario = nomesUsuarios.stream().anyMatch(conteudo::contains);
-//        System.out.println("SISTEMA " + mensagem.getAuthor().isSystem());
-//        System.out.println("WEBHOOK " + mensagem.isWebhookMessage());
-//        System.out.println("CONTEM USUSARIO " + contemNomeUsuario);
-//        System.out.println("CONTEUDO " + mensagem.getContentRaw());
-//        System.out.println("NOME DO AUTOR " + mensagem.getAuthor().getName());
+            if (event.getMessage().getAuthor().isBot()) return;
 
-        if (contemNomeUsuario) {
-            System.out.println("ENTROU NA CONDIÇÃO");
-            event.getChannel().sendMessage(event.getAuthor().getAsMention() + " kita dessa porra").queue();
+            String nomeUsuario = event.getMessage().getAuthor().getName();
+            boolean contemNomeUsuario = nomesUsuarios.stream().anyMatch(nomeUsuario::contains);
 
-            nomesUsuarios.removeIf(conteudo::contains);
+            if (contemNomeUsuario) {
+                event.getChannel().sendMessage(event.getAuthor().getAsMention() + " kita dessa porra").queue();
+                nomesUsuarios.removeIf(nomeUsuario::contains);
+            }
         }
     }
 }
