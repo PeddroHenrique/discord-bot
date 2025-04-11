@@ -1,4 +1,4 @@
-package br.com.predio.discordbot;
+package br.com.predio.discordbot.utils;
 
 import java.io.IOException;
 import java.io.InputStream;
