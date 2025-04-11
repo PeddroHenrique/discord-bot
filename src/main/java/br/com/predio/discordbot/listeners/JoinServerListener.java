@@ -1,5 +1,6 @@
-package br.com.predio.discordbot;
+package br.com.predio.discordbot.listeners;
 
+import br.com.predio.discordbot.PropertiesRetriver;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
